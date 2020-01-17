@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GrumPHP\Task;
 
+use GrumPHP\Configuration\SharedConfigurationOptionsResolver;
 use GrumPHP\Runner\TaskResult;
 use GrumPHP\Runner\TaskResultInterface;
 use GrumPHP\Task\Context\ContextInterface;
@@ -23,8 +24,7 @@ class PhpCsFixerV2 extends AbstractExternalTask
 
     public function getConfigurableOptions(): OptionsResolver
     {
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults([
+        $this->resolver->setDefaults([
             'allow_risky' => null,
             'cache_file' => null,
             'config' => null,
@@ -36,17 +36,17 @@ class PhpCsFixerV2 extends AbstractExternalTask
             'triggered_by' => ['php'],
         ]);
 
-        $resolver->addAllowedTypes('allow_risky', ['null', 'bool']);
-        $resolver->addAllowedTypes('cache_file', ['null', 'string']);
-        $resolver->addAllowedTypes('config', ['null', 'string']);
-        $resolver->addAllowedTypes('rules', ['array']);
-        $resolver->addAllowedTypes('using_cache', ['null', 'bool']);
-        $resolver->addAllowedTypes('config_contains_finder', ['bool']);
-        $resolver->addAllowedTypes('verbose', ['bool']);
-        $resolver->addAllowedTypes('diff', ['bool']);
-        $resolver->addAllowedTypes('triggered_by', ['array']);
+        $this->resolver->addAllowedTypes('allow_risky', ['null', 'bool']);
+        $this->resolver->addAllowedTypes('cache_file', ['null', 'string']);
+        $this->resolver->addAllowedTypes('config', ['null', 'string']);
+        $this->resolver->addAllowedTypes('rules', ['array']);
+        $this->resolver->addAllowedTypes('using_cache', ['null', 'bool']);
+        $this->resolver->addAllowedTypes('config_contains_finder', ['bool']);
+        $this->resolver->addAllowedTypes('verbose', ['bool']);
+        $this->resolver->addAllowedTypes('diff', ['bool']);
+        $this->resolver->addAllowedTypes('triggered_by', ['array']);
 
-        return $resolver;
+        return $this->resolver;
     }
 
     /**

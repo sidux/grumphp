@@ -19,4 +19,9 @@ class GitPreCommitContext implements ContextInterface
     {
         return $this->files;
     }
+
+    public function setFiles(FilesCollection $files)
+    {
+        $this->files = $files;
+    }
 }

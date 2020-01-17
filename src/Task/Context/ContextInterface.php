@@ -9,4 +9,6 @@ use GrumPHP\Collection\FilesCollection;
 interface ContextInterface
 {
     public function getFiles(): FilesCollection;
+
+    public function setFiles(FilesCollection $filter);
 }

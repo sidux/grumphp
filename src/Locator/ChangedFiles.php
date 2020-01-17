@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace GrumPHP\Locator;
 
 use Gitonomy\Git\Diff\Diff;
-use Gitonomy\Git\Diff\File;
+use Gitonomy\Git\Diff\File as DiffFile;
 use GrumPHP\Collection\FilesCollection;
 use GrumPHP\Git\GitRepository;
+use GrumPHP\Util\File;
 use GrumPHP\Util\Filesystem;
 use GrumPHP\Util\Paths;
 use Symfony\Component\Finder\SplFileInfo;
@@ -56,25 +57,25 @@ class ChangedFiles
     private function parseFilesFromDiff(Diff $diff): FilesCollection
     {
         $files = [];
-        /** @var File $file */
+        /** @var DiffFile $file */
         foreach ($diff->getFiles() as $file) {
             $fileObject = $this->makeFileRelativeToProjectDir($file);
             if ($file->isDeletion() || !$this->filesystem->exists($fileObject->getPathname())) {
                 continue;
             }
-
+            $fileObject->setDiffFile($file);
             $files[] = $fileObject;
         }
 
         return new FilesCollection($files);
     }
 
-    private function makeFileRelativeToProjectDir(File $file): SplFileInfo
+    private function makeFileRelativeToProjectDir(DiffFile $file): File
     {
         $filePath = $this->paths->makePathRelativeToProjectDir(
             $file->isRename() ? $file->getNewName() : $file->getName()
         );
 
-        return new SplFileInfo($filePath, dirname($filePath), $filePath);
+        return new File($filePath, dirname($filePath), $filePath);
     }
 }

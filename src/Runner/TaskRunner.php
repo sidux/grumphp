@@ -18,6 +18,7 @@ use GrumPHP\Exception\PlatformException;
 use GrumPHP\Exception\RuntimeException;
 use GrumPHP\Task\Context\ContextInterface;
 use GrumPHP\Task\TaskInterface;
+use GrumPHP\Util\File;
 
 class TaskRunner
 {
@@ -111,6 +112,7 @@ class TaskRunner
     {
         try {
             $this->eventDispatcher->dispatch(new TaskEvent($task, $context), TaskEvents::TASK_RUN);
+            $this->handleFileFilters($task, $context);
             $result = $task->run($context);
         } catch (PlatformException $e) {
             $this->eventDispatcher->dispatch(new TaskEvent($task, $context), TaskEvents::TASK_SKIPPED);
@@ -142,5 +144,19 @@ class TaskRunner
         $this->eventDispatcher->dispatch(new TaskEvent($task, $context), TaskEvents::TASK_COMPLETE);
 
         return $result;
+    }
+
+    private function handleFileFilters(TaskInterface $task, ContextInterface $context)
+    {
+        if (!empty($task->getConfiguration()['filter_created_only'])) {
+            $files = $context->getFiles();
+            $context->setFiles(
+                $files->filter(
+                    static function (File $file) {
+                        return $file->getDiffFile()->isCreation();
+                    }
+                )
+            );
+        }
     }
 }
